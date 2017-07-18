@@ -2,34 +2,30 @@ package ru.javawebinar.topjava.web;
 
 import ru.javawebinar.topjava.data.MealDao;
 import ru.javawebinar.topjava.data.MealMemoryDao;
-import ru.javawebinar.topjava.data.MealMemoryStorage;
 import ru.javawebinar.topjava.util.*;
 import ru.javawebinar.topjava.model.*;
 
 import org.slf4j.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.*;
 
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class MealServlet extends HttpServlet {
     private static final Logger log = getLogger(MealServlet.class);
-
     private static final int CALORIES_LIMIT = 2000;
+    private static final MealDao mealDao = new MealMemoryDao();
 
-    private static final MealMemoryStorage mealStorage;
-    private static final MealDao mealDao;
-
-    static {
-        mealStorage = new MealMemoryStorage();
-        mealDao = new MealMemoryDao(mealStorage);
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        super.init(config);
         DataFeedUtil.generateMeals(10, mealDao);
     }
 
@@ -59,7 +55,7 @@ public class MealServlet extends HttpServlet {
             String description = request.getParameter("description");
             int calories = Integer.parseInt(request.getParameter("calories"));
             if ("add".equals(action)) {
-                mealDao.add(dateTime, description, calories);
+                mealDao.add(new Meal(dateTime, description, calories));
             } else { // update action
                 mealDao.update(new Meal(mealId, dateTime, description, calories));
             }

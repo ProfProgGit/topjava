@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class Meal {
-    private final int id;
+    private int id;
 
     private final LocalDateTime dateTime;
 
@@ -13,15 +13,27 @@ public class Meal {
 
     private final int calories;
 
-    public Meal(int id, LocalDateTime dateTime, String description, int calories) {
-        this.id = id;
+    public Meal(LocalDateTime dateTime, String description, int calories) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
     }
 
+    public Meal(int id, LocalDateTime dateTime, String description, int calories) {
+        this(dateTime, description, calories);
+        this.id = id;
+    }
+
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        if (this.id == 0) {
+            this.id = id;
+        } else {
+            throw new UnsupportedOperationException("meal id can't be changed");
+        }
     }
 
     public LocalDateTime getDateTime() {

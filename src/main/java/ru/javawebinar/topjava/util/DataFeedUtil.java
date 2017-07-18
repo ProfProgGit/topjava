@@ -33,7 +33,9 @@ public class DataFeedUtil {
                         maxCalories = 600;
                         description = "Завтрак";
                     }
-                    mealDao.add(startDate.plusDays((long) (i / 3)), description, randomInt(minCalories, maxCalories));
+                    mealDao.add(new Meal(startDate.plusDays((long) (i / 3)),
+                            description,
+                            randomInt(minCalories, maxCalories)));
                 });
     }
 
