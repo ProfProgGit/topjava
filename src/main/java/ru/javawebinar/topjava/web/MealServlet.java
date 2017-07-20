@@ -43,13 +43,13 @@ public class MealServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        String action = request.getParameter("formButton");
-        int mealId = "add".equals(action) ? 0 : Integer.parseInt(request.getParameter("mealId"));
+        String action = request.getParameter("action");
+        int id = "add".equals(action) ? 0 : Integer.parseInt(request.getParameter("id"));
         if ("delete".equals(action)) {
-            mealDao.delete(mealId);
+            mealDao.delete(id);
         } else if ("edit".equals(action)) {
             // edit action makes fields for item with id=mealId available for update
-            request.setAttribute("updatedMealId", mealId);
+            request.setAttribute("updatedId", id);
         } else {
             LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"));
             String description = request.getParameter("description");
@@ -57,7 +57,7 @@ public class MealServlet extends HttpServlet {
             if ("add".equals(action)) {
                 mealDao.add(new Meal(dateTime, description, calories));
             } else { // update action
-                mealDao.update(new Meal(mealId, dateTime, description, calories));
+                mealDao.update(new Meal(id, dateTime, description, calories));
             }
         }
         request.setAttribute("mealsWithExceeded", MealsUtil.getFilteredWithExceeded(mealDao.readAll(), CALORIES_LIMIT));

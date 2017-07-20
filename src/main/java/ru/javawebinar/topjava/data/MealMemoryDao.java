@@ -6,14 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MealMemoryDao implements MealDao {
-    private int lastGeneratedId = 0;
+    private AtomicInteger lastGeneratedId = new AtomicInteger();
     private final Map<Integer, Meal> mealMap = new ConcurrentHashMap<>();
 
-    public synchronized void add(Meal meal) {
-        meal.setId(++lastGeneratedId);
-        mealMap.put(lastGeneratedId, meal);
+    public void add(Meal meal) {
+        meal.setId(lastGeneratedId.addAndGet(1));
+        mealMap.put(meal.getId(), meal);
     }
 
     public Meal read(int id) {

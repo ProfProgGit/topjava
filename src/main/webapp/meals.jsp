@@ -31,16 +31,15 @@
         <td><input type="datetime-local" name="dateTime" form="formAdd" title="Meal date/time"></td>
         <td><input type="text" name="description" form="formAdd" title="Meal description"></td>
         <td><input type="number" name="calories" form="formAdd" title="Meal calories"></td>
-        <td><input type="submit" name="formButton" value="add" form="formAdd"></td>
+        <td><input type="submit" name="action" value="add" form="formAdd"></td>
         <td></td>
     </tr>
     <c:forEach var="list" items="${mealsWithExceeded}">
         <tr style="color:${list.exceed ? 'red':'green'}; ">
-            <c:set var="updatedId" value="${updatedMealId}"/>
             <c:choose>
                 <c:when test="${updatedId == list.id}">
                     <td><input type="hidden"
-                               name="mealId"
+                               name="id"
                                value="<c:out value="${list.id}"/>"
                                form="form<c:out value="${list.id}"/>">
                         <input type="datetime-local"
@@ -59,25 +58,25 @@
                                form="form<c:out value="${list.id}"/>"
                                title="Meal calories"></td>
                     <td><input type="submit"
-                               name="formButton"
+                               name="action"
                                value="update"
                                form="form<c:out value="${list.id}"/>"></td>
                     <td></td>
                 </c:when>
                 <c:otherwise>
                     <td><input type="hidden"
-                               name="mealId"
+                               name="id"
                                value="<c:out value="${list.id}"/>"
                                form="form<c:out value="${list.id}"/>">
                         <c:out value="${fn:replace(list.dateTime, 'T', ' ')}"/></td>
                     <td><c:out value="${list.description}"/></td>
                     <td><c:out value="${list.calories}"/></td>
                     <td><input type="submit"
-                               name="formButton"
+                               name="action"
                                value="edit"
                                form="form<c:out value="${list.id}"/>"></td>
                     <td><input type="submit"
-                               name="formButton"
+                               name="action"
                                value="delete"
                                form="form<c:out value="${list.id}"/>">
                     </td>
