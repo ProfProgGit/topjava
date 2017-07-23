@@ -1,15 +1,19 @@
 package ru.javawebinar.topjava.web.user;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 
-import java.util.List;
-
 import static ru.javawebinar.topjava.util.ValidationUtil.checkIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
 
 public abstract class AbstractUserController {
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -39,7 +43,7 @@ public abstract class AbstractUserController {
     }
 
     public void update(User user, int id) {
-        log.info("update {} with id={}", user, id);
+        log.info("update {} with {}", user, id);
         checkIdConsistent(user, id);
         service.update(user);
     }

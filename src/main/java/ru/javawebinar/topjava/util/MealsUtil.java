@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.util;
 
+
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
 
@@ -7,41 +8,55 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.*;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import java.util.stream.Collectors;
 
-import static java.util.function.Function.identity;
 
 public class MealsUtil {
     public static final List<Meal> MEALS = Arrays.asList(
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "User1 Завтрак", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "User1 Обед", 1000, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "User1 Ужин", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "User1 Завтрак", 1000, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "User1 Обед", 500, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "User1 Ужин", 510, 1),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "User2 Завтрак", 500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "User2 Обед", 2500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "User2 Ужин", 500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "User2 Завтрак", 100, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "User2 Обед", 500, 2),
-            new Meal(LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "User2 Ужин", 510, 2)
+            new Meal(1, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "User1 Завтрак", 500),
+            new Meal(1, LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "User1 Обед", 1000),
+            new Meal(1, LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "User1 Ужин", 500),
+            new Meal(1, LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "User1 Завтрак", 1000),
+            new Meal(1, LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "User1 Обед", 500),
+            new Meal(1, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "User1 Ужин", 510),
+            new Meal(2, LocalDateTime.of(2015, Month.MAY, 30, 10, 0), "User2 Завтрак", 500),
+            new Meal(2, LocalDateTime.of(2015, Month.MAY, 30, 13, 0), "User2 Обед", 2500),
+            new Meal(2, LocalDateTime.of(2015, Month.MAY, 30, 20, 0), "User2 Ужин", 500),
+            new Meal(2, LocalDateTime.of(2015, Month.MAY, 31, 10, 0), "User2 Завтрак", 100),
+            new Meal(2, LocalDateTime.of(2015, Month.MAY, 31, 13, 0), "User2 Обед", 500),
+            new Meal(2, LocalDateTime.of(2015, Month.MAY, 31, 20, 0), "User2 Ужин", 510)
     );
 
     public static final int DEFAULT_CALORIES_PER_DAY = 2000;
 
     public static void main(String[] args) {
-        List<MealWithExceed> mealsWithExceeded = getFilteredWithExceeded(MEALS, LocalTime.of(7, 0), LocalTime.of(12, 0), 2000);
+        List<MealWithExceed> mealsWithExceeded = getFilteredWithExceeded(MEALS,
+                LocalTime.of(7, 0),
+                LocalTime.of(12, 0),
+                2000);
         mealsWithExceeded.forEach(System.out::println);
 
-        System.out.println(getFilteredWithExceededByCycle(MEALS, LocalTime.of(7, 0), LocalTime.of(12, 0), DEFAULT_CALORIES_PER_DAY));
+        System.out.println(getFilteredWithExceededByCycle(MEALS,
+                LocalTime.of(7, 0),
+                LocalTime.of(12, 0),
+                DEFAULT_CALORIES_PER_DAY));
     }
 
     public static List<MealWithExceed> getWithExceeded(Collection<Meal> meals, int caloriesPerDay) {
         return getFilteredWithExceeded(meals, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
     }
 
-    public static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealWithExceed> getFilteredWithExceeded(Collection<Meal> meals,
+                                                               LocalTime startTime,
+                                                               LocalTime endTime,
+                                                               int caloriesPerDay) {
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
                         Collectors.groupingBy(Meal::getDate, Collectors.summingInt(Meal::getCalories))
@@ -54,7 +69,10 @@ public class MealsUtil {
                 .collect(Collectors.toList());
     }
 
-    public static List<MealWithExceed> getFilteredWithExceededByCycle(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealWithExceed> getFilteredWithExceededByCycle(List<Meal> meals,
+                                                                      LocalTime startTime,
+                                                                      LocalTime endTime,
+                                                                      int caloriesPerDay) {
 
         final Map<LocalDate, Integer> caloriesSumByDate = new HashMap<>();
         meals.forEach(meal -> caloriesSumByDate.merge(meal.getDate(), meal.getCalories(), Integer::sum));
@@ -73,18 +91,20 @@ public class MealsUtil {
      *  Streams are not multiplied, so complexity is still O(N)
      *  Execution time is increased as for every day we create 2 additional streams
      */
-    public static List<MealWithExceed> getFilteredWithExceededInOneReturn(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealWithExceed> getFilteredWithExceededInOneReturn(List<Meal> meals,
+                                                                          LocalTime startTime,
+                                                                          LocalTime endTime,
+                                                                          int caloriesPerDay) {
 
         Collection<List<Meal>> listDayMeals = meals.stream()
                 .collect(Collectors.groupingBy(Meal::getDate)).values();
 
         return listDayMeals
-                .stream().map(dayMeals -> {
+                .stream().flatMap(dayMeals -> {
                     boolean exceed = dayMeals.stream().mapToInt(Meal::getCalories).sum() > caloriesPerDay;
                     return dayMeals.stream().filter(meal ->
                             DateTimeUtil.isBetween(meal.getTime(), startTime, endTime))
-                            .map(meal -> createWithExceed(meal, exceed));
-                }).flatMap(identity())
+                            .map(meal -> createWithExceed(meal, exceed)); })
                 .collect(Collectors.toList());
     }
 
