@@ -1,19 +1,14 @@
 package ru.javawebinar.topjava.util;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.BaseEntity;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 
 public class ValidationUtil {
-
-    public static void checkNotFound(boolean found, int id, int userId) {
-        checkNotFound(found, "id=" + id + "  for userId=" + userId);
-    }
-
-    public static <T> T checkNotFound(T object, int id, int userId) {
-        return checkNotFound(object, "id=" + id + "  for userId=" + userId);
-    }
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public static void checkNotFound(boolean found, int id) {
         checkNotFound(found, "id=" + id);

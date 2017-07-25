@@ -14,10 +14,16 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Objects;
+
+import java.time.format.DateTimeParseException;
 
 
 public class MealServlet extends HttpServlet {
@@ -38,15 +44,15 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id), 1,
+        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
+                null,
                 LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
-                Integer.valueOf(request.getParameter("calories"))); // TODO , 1,
+                Integer.valueOf(request.getParameter("calories")));
 
-        if(meal.isNew()) {
+        if (meal.isNew()) {
             mealRestController.create(meal);
-        }
-        else {
+        } else {
             mealRestController.update(meal);
         }
         response.sendRedirect("meals");
@@ -56,6 +62,7 @@ public class MealServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
+        HttpSession session = request.getSession();
         switch (action == null ? "all" : action) {
             case "delete":
                 mealRestController.delete(getId(request));
@@ -64,27 +71,50 @@ public class MealServlet extends HttpServlet {
             case "create":
             case "update":
                 final Meal meal = "create".equals(action) ?
-                        new Meal(1, LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) : // TODO new Meal(1,
+                        new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES), "", 1000) :
                         mealRestController.get(getId(request));
                 request.setAttribute("meal", meal);
                 request.getRequestDispatcher("/meal.jsp").forward(request, response);
                 break;
+            case "filter":
+                Arrays.stream(new String[]{"startDate", "endDate", "startTime", "endTime"})
+                        .forEach(name -> session.setAttribute(name, request.getParameter(name)));
             case "all":
             default:
-                request.setAttribute("meals", mealRestController.getAll());
+                request.setAttribute("meals", mealRestController.getFiltered(
+                        tryToParseDate((String) session.getAttribute("startDate")),
+                        tryToParseDate((String) session.getAttribute("endDate")),
+                        tryToParseTime((String) session.getAttribute("startTime")),
+                        tryToParseTime((String) session.getAttribute("endTime"))
+                ));
                 request.getRequestDispatcher("/meals.jsp").forward(request, response);
                 break;
         }
     }
 
     @Override
-    public void destroy(){
-        super.destroy(); // TODO: seems we do not need this call here as
-        appCtx.close(); // TODO: do search on how to close correcltly
+    public void destroy() {
+        appCtx.close();
     }
 
     private int getId(HttpServletRequest request) {
         String paramId = Objects.requireNonNull(request.getParameter("id"));
         return Integer.valueOf(paramId);
+    }
+
+    private LocalDate tryToParseDate(String dateString) {
+        try {
+            return LocalDate.parse(Objects.requireNonNull(dateString));
+        } catch (NullPointerException | DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private LocalTime tryToParseTime(String timeString) {
+        try {
+            return LocalTime.parse(Objects.requireNonNull(timeString));
+        } catch (NullPointerException | DateTimeParseException e) {
+            return null;
+        }
     }
 }

@@ -6,8 +6,18 @@
 <body>
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
+Authenticate as:
+<select id="userSelect" name="userId" title="Select User">
+    <option value="1">User1</option>
+    <option value="2">User2</option>
+</select>
+<span style="color:red">To complete authentication process click Users link.</span>
+<hr>
+
 <ul>
-    <li><a href="users">Users</a></li>
+    <li><a onclick="window.location='users?userId='+document.getElementById('userSelect').value;return false;" href="#">
+        Users</a>
+    </li>
     <li><a href="meals">Meals</a></li>
 </ul>
 </body>

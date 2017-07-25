@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.repository.mock;
 
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -26,51 +28,51 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     private AtomicInteger counter = new AtomicInteger(0);
 
     {
-        MealsUtil.MEALS.forEach(meal->this.save(meal, 0)); // TODO: null is not good! but 0 is not good either!
+        MealsUtil.MEALS.forEach(meal -> this.save(meal, meal.getUserId()));
     }
 
     @Override
     public Meal save(Meal meal, int userId) {
-        log.info("save {} for userId={}", meal, userId);
+        log.info("save {} by userId={}", meal, userId);
 
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
-        } else if ( meal.getUserId() != userId ) { // TODO refactor when understand where userId should be set (!)
-            // TODO may be better using checkUserId(Meal meal, int userId); method instead?
+            return repository.put(meal.getId(), meal);
+        } else if (!checkUserIdConsistent(repository.get(meal.getId()), userId)) {
+            // if existing meal record with specified id belongs to different userId then no update, return null
             return null;
+        } else {
+            // use replace to avoid creating new meal if the old one has been deleted during update operation
+            return repository.replace(meal.getId(), meal);
         }
-        repository.put(meal.getId(), meal);
-        return meal;
     }
 
     @Override
     public boolean delete(int id, int userId) {
-        log.info("delete {}", id );
-        Meal meal = repository.get(id);
-        log.info("delete id={} meal={} userId={}", id, meal, userId );
-        return checkUserId(meal, userId) && repository.remove(id) != null;
+        log.info("delete id={} by userId={}", id, userId);
+        return checkUserIdConsistent(repository.get(id), userId) && repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
-        log.info("get {}", id);
+        log.info("get id={} by userId={}", id, userId);
         Meal meal = repository.get(id);
-        return checkUserId(meal, userId) ? meal : null;
+        return checkUserIdConsistent(meal, userId) ? meal : null;
     }
-
 
     @Override
-    public List<Meal> getAll(int userId) {
-        log.info("getAll for user id={}", userId);
+    public List<Meal> getFiltered(int userId, LocalDate startDate, LocalDate endDate) {
+        log.info("getFiltered for userId={} && date>={} && date<={}", userId, startDate, endDate);
 
         return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList()); // TODO what returns if no items (null or empty list?)
+                .filter(meal -> meal.getUserId() == userId && DateTimeUtil.isBetween(meal.getDate(), startDate, endDate))
+                .sorted(Comparator.comparing(Meal::getDateTime).reversed()
+                        .thenComparing(Comparator.comparing(Meal::getId)))
+                .collect(Collectors.toList());
     }
 
-    private boolean checkUserId(Meal meal, int userId){
-        return meal!= null && meal.getUserId()== userId;
+    private boolean checkUserIdConsistent(Meal meal, int userId) {
+        return meal != null && meal.getUserId() == userId;
     }
 }
 

@@ -104,7 +104,8 @@ public class MealsUtil {
                     boolean exceed = dayMeals.stream().mapToInt(Meal::getCalories).sum() > caloriesPerDay;
                     return dayMeals.stream().filter(meal ->
                             DateTimeUtil.isBetween(meal.getTime(), startTime, endTime))
-                            .map(meal -> createWithExceed(meal, exceed)); })
+                            .map(meal -> createWithExceed(meal, exceed));
+                })
                 .collect(Collectors.toList());
     }
 
