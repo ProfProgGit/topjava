@@ -29,8 +29,8 @@ import java.time.format.DateTimeParseException;
 public class MealServlet extends HttpServlet {
     private static final Logger log = LoggerFactory.getLogger(MealServlet.class);
 
-    private static ConfigurableApplicationContext appCtx;
-    private static MealRestController mealRestController;
+    private ConfigurableApplicationContext appCtx;
+    private MealRestController mealRestController;
 
     @Override
     public void init(ServletConfig config) throws ServletException {

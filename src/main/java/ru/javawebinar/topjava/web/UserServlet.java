@@ -19,7 +19,11 @@ public class UserServlet extends HttpServlet {
         log.debug("forward to users");
 
         // mock authorization
-        AuthorizedUser.setId(Integer.parseInt(request.getParameter("userId")));
-        request.getRequestDispatcher("/users.jsp").forward(request, response);
+        if ("authenticate".equals(request.getParameter("action"))) {
+            AuthorizedUser.setId(Integer.parseInt(request.getParameter("userId")));
+            response.sendRedirect("meals");
+        } else {
+            request.getRequestDispatcher("/users.jsp").forward(request, response);
+        }
     }
 }

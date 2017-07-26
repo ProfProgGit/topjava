@@ -38,26 +38,23 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
         if (meal.isNew()) {
             meal.setId(counter.incrementAndGet());
             return repository.put(meal.getId(), meal);
-        } else if (!checkUserIdConsistent(repository.get(meal.getId()), userId)) {
-            // if existing meal record with specified id belongs to different userId then no update, return null
-            return null;
         } else {
-            // use replace to avoid creating new meal if the old one has been deleted during update operation
-            return repository.replace(meal.getId(), meal);
+            return  this.get(meal.getId(), userId) == null || repository.replace(meal.getId(), meal) == null ?
+                    null : meal;
         }
     }
 
     @Override
     public boolean delete(int id, int userId) {
         log.info("delete id={} by userId={}", id, userId);
-        return checkUserIdConsistent(repository.get(id), userId) && repository.remove(id) != null;
+        return this.get(id, userId) != null && repository.remove(id) != null;
     }
 
     @Override
     public Meal get(int id, int userId) {
         log.info("get id={} by userId={}", id, userId);
         Meal meal = repository.get(id);
-        return checkUserIdConsistent(meal, userId) ? meal : null;
+        return meal != null && meal.getUserId() == userId ? meal : null;
     }
 
     @Override
@@ -71,8 +68,5 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
                 .collect(Collectors.toList());
     }
 
-    private boolean checkUserIdConsistent(Meal meal, int userId) {
-        return meal != null && meal.getUserId() == userId;
-    }
 }
 

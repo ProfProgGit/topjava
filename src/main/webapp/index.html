@@ -11,11 +11,13 @@ Authenticate as:
     <option value="1">User1</option>
     <option value="2">User2</option>
 </select>
-<span style="color:red">To complete authentication process click Users link.</span>
+<input type="button"
+       onclick="window.location='users?action=authenticate&userId='+document.getElementById('userSelect').value;"
+       value="sign in">
 <hr>
 
 <ul>
-    <li><a onclick="window.location='users?userId='+document.getElementById('userSelect').value;return false;" href="#">
+    <li><a href="users">
         Users</a>
     </li>
     <li><a href="meals">Meals</a></li>
