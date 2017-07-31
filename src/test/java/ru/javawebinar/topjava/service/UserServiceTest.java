@@ -19,10 +19,7 @@ import java.util.Collections;
 
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ContextConfiguration({
-        "classpath:spring/spring-app.xml",
-        "classpath:spring/spring-db.xml"
-})
+@ContextConfiguration("classpath:spring/spring-app.xml")
 @RunWith(SpringRunner.class)
 public class UserServiceTest {
 
@@ -62,7 +59,7 @@ public class UserServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void testNotFoundDelete() throws Exception {
-        service.delete(1);
+        service.delete(NONEXISTENT_USER_ID);
     }
 
     @Test
@@ -73,7 +70,7 @@ public class UserServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void testGetNotFound() throws Exception {
-        service.get(1);
+        service.get(NONEXISTENT_USER_ID);
     }
 
     @Test
