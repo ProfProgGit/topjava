@@ -63,10 +63,11 @@ public class MealServiceTest {
 
     @After
     public final void afterEachTest() {
-        Long endTestNano = System.nanoTime();
-        testDuration.put(name.getMethodName(), (endTestNano - startTestNano) / 1000000L);
+        Long duration = (System.nanoTime() - startTestNano) / 1000000L;
+        String testName = name.getMethodName();
+        testDuration.put(testName, duration);
+        log.info("{} test completed in {} milliseconds", testName, duration);
     }
-
 
     @Test
     public void testDelete() throws Exception {
