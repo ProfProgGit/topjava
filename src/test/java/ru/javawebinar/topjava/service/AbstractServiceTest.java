@@ -10,9 +10,6 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
 @ContextConfiguration({
@@ -24,18 +21,10 @@ import static org.slf4j.LoggerFactory.getLogger;
 @ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class AbstractServiceTest {
     static final Logger resultLog = getLogger("result");
-    static final Map<String, Appendable> testSummaryReports = new ConcurrentHashMap<>();
+    static StringBuilder allTestsResults;
 
     static {
         // needed only for java.util.logging (postgres driver)
         SLF4JBridgeHandler.install();
-    }
-
-    void appendToReportByClass(String reportingClassName, String report) {
-            try {
-                testSummaryReports.computeIfAbsent(reportingClassName,k->new StringBuffer()).append(report);
-            } catch(Exception e) {
-                resultLog.error(e.getMessage(), e);
-            }
     }
 }

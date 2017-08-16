@@ -20,7 +20,7 @@ public class SpringMain {
         try (ConfigurableApplicationContext appCtx =
                      new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml",
                              "spring/spring-db.xml"}, false)) {
-            appCtx.getEnvironment().setActiveProfiles("datajpa", Profiles.getActiveDbProfile());
+            appCtx.getEnvironment().setActiveProfiles(Profiles.REPOSITORY_IMPLEMENTATION, Profiles.getActiveDbProfile());
             appCtx.refresh();
 
             System.out.println("Bean definition names: " + Arrays.toString(appCtx.getBeanDefinitionNames()));

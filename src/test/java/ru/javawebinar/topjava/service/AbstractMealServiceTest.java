@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.service;
 
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -31,18 +33,23 @@ public abstract class AbstractMealServiceTest extends AbstractServiceTest {
         @Override
         protected void finished(long nanos, Description description) {
             String result = String.format("%-25s %7d", description.getMethodName(), TimeUnit.NANOSECONDS.toMillis(nanos));
-            appendToReport(result + '\n');
+            allTestsResults.append(result).append('\n');
             resultLog.info(result + " ms\n");
         }
     };
 
-    protected abstract void appendToReport(String report);
+    @BeforeClass
+    public static void cleanResult() {
+        allTestsResults = new StringBuilder();
+    }
 
-    static void printResult(String className) {
+
+    @AfterClass
+    public static void printResult() {
         resultLog.info("\n---------------------------------" +
                 "\nTest                 Duration, ms" +
                 "\n---------------------------------\n" +
-                testSummaryReports.get(className) +
+                allTestsResults +
                 "---------------------------------\n");
     }
 
