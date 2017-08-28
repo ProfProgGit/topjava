@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class RootController {
     @Autowired
-    private UserService service;
+    private UserService userService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     public String root() {
@@ -22,7 +22,7 @@ public class RootController {
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public String users(Model model) {
-        model.addAttribute("users", service.getAll());
+        model.addAttribute("users", userService.getAll());
         return "users";
     }
 

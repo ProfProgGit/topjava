@@ -9,16 +9,16 @@
 <jsp:include page="fragments/bodyHeader.jsp"/>
 
 <section>
-    <h3><spring:message code="user.title"/></h3>
+    <h3><spring:message code="users.formName"/></h3>
 
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
         <tr>
-            <th><spring:message code="user.name"/></th>
-            <th><spring:message code="user.email"/></th>
-            <th><spring:message code="user.roles"/></th>
-            <th><spring:message code="user.active"/></th>
-            <th><spring:message code="user.registered"/></th>
+            <th><spring:message code="users.name"/></th>
+            <th><spring:message code="users.email"/></th>
+            <th><spring:message code="users.roles"/></th>
+            <th><spring:message code="users.active"/></th>
+            <th><spring:message code="users.registered"/></th>
         </tr>
         </thead>
         <c:forEach items="${users}" var="user">
@@ -34,6 +34,7 @@
         </c:forEach>
     </table>
 </section>
+
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>
