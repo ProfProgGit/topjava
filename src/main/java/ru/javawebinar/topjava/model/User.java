@@ -100,6 +100,10 @@ public class User extends AbstractNamedEntity {
         this.password = password;
     }
 
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public Date getRegistered() {
         return registered;
     }

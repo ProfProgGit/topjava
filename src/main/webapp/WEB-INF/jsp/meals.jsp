@@ -31,7 +31,7 @@
         <button type="submit"><spring:message code="meals.filter"/></button>
     </form>
     <hr/>
-    <a href="meals/mealForm"><spring:message code="meals.addMeal"/></a>
+    <a href="meals/createForm"><spring:message code="meals.addMeal"/></a>
     <hr/>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
@@ -53,7 +53,7 @@
                 </td>
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
-                <td><a href="meals/mealForm?id=${meal.id}"><spring:message code="meals.update"/></a></td>
+                <td><a href="meals/updateForm?id=${meal.id}"><spring:message code="meals.update"/></a></td>
                 <td><a href="meals/delete?id=${meal.id}"><spring:message code="meals.delete"/></a></td>
             </tr>
         </c:forEach>
