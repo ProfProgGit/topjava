@@ -81,4 +81,12 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         service.update(updated);
         MATCHER.assertEquals(updated, service.get(USER_ID));
     }
+
+    @Test
+    public void testEnable() throws Exception {
+        User updated = new User(USER);
+        updated.setEnabled(false);
+        service.enable(USER_ID, false);
+        MATCHER.assertEquals(updated, service.get(USER_ID));
+    }
 }

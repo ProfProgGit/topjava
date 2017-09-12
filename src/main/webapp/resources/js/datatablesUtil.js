@@ -1,6 +1,10 @@
 function makeEditable() {
     $(".delete").click(function () {
-        deleteRow($(this).attr("id"));
+        deleteRow(getRowId($(this)));
+    });
+
+    $("#add").click(function () {
+        add();
     });
 
     $("#detailsForm").submit(function () {
@@ -27,16 +31,14 @@ function deleteRow(id) {
         type: "DELETE",
         success: function () {
             updateTable();
-            successNoty("Deleted");
+            successNoty(messages['common.record.deleted']);
         }
     });
 }
 
-function updateTable() {
-    $.get(ajaxUrl, function (data) {
-        datatableApi.clear().rows.add(data).draw();
-    });
-}
+var updateTableCallback = function (data) {
+    datatableApi.clear().rows.add(data).draw();
+};
 
 function save() {
     var form = $("#detailsForm");
@@ -47,7 +49,7 @@ function save() {
         success: function () {
             $("#editRow").modal("hide");
             updateTable();
-            successNoty("Saved");
+            successNoty(messages['common.record.saved']);
         }
     });
 }
@@ -65,7 +67,7 @@ function successNoty(text) {
     closeNoty();
     new Noty({
         text: "<span class='glyphicon glyphicon-ok'></span> &nbsp;" + text,
-        type: 'success',
+        type: "success",
         layout: "bottomRight",
         timeout: 1000
     }).show();
@@ -78,4 +80,8 @@ function failNoty(event, jqXHR, options, jsExc) {
         type: "error",
         layout: "bottomRight"
     }).show();
+}
+
+function getRowId(formItem) {
+    return formItem.parents().filter("tr[data-rowid]").attr("data-rowid");
 }

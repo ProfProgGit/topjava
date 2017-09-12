@@ -6,6 +6,7 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.util.List;
 
+
 public interface UserService {
 
     User create(User user);
@@ -23,4 +24,6 @@ public interface UserService {
     List<User> getAll();
 
     User getWithMeals(int id);
+
+    void enable(int id, boolean enabled) throws NotFoundException;
 }

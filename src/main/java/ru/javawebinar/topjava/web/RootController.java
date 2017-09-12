@@ -44,4 +44,9 @@ public class RootController {
                 MealsUtil.getWithExceeded(mealService.getAll(AuthorizedUser.id()), AuthorizedUser.getCaloriesPerDay()));
         return "meals";
     }
+
+    @GetMapping("/resources/js/messages.js")
+    public String jsMessages() {
+        return "jsMessages";
+    }
 }
