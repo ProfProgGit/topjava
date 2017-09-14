@@ -44,6 +44,6 @@ function setMealEventProcessors() {
 }
 
 function updateTable() {
-    var submitData = $("#filterForm").find(":input").serializeArray();
+    var submitData = $("#filterForm").serialize();
     $.get(ajaxUrl, submitData, updateTableCallback);
 }
