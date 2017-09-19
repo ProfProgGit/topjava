@@ -1,6 +1,12 @@
 var ajaxUrl = "ajax/profile/meals/";
 var datatableApi;
 
+$.ajaxSetup({
+    dataFilter: function (data) {
+        return data.replace(/("dateTime":"\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}):\d{2}"/g, '$1 $2"');
+    }
+});
+
 function updateTable() {
     $.ajax({
         type: "POST",
@@ -17,6 +23,10 @@ function clearFilter() {
 
 $(function () {
     datatableApi = $("#datatable").DataTable({
+        "ajax": {
+            "url": ajaxUrl,
+            "dataSrc": ""
+        },
         "paging": false,
         "info": true,
         "columns": [
@@ -31,11 +41,13 @@ $(function () {
             },
             {
                 "defaultContent": "Edit",
-                "orderable": false
+                "orderable": false,
+                "render": renderEditBtn
             },
             {
                 "defaultContent": "Delete",
-                "orderable": false
+                "orderable": false,
+                "render": renderDeleteBtn
             }
         ],
         "order": [
@@ -43,7 +55,22 @@ $(function () {
                 0,
                 "desc"
             ]
-        ]
+        ],
+        "createdRow": function (row, data) {
+            $(row).addClass(data.exceed ? 'exceeded' : 'normal');
+        },
+        "initComplete": makeEditable
     });
-    makeEditable();
+});
+
+$(function () {
+    $('.date-time-picker').datetimepicker({
+        format: 'YYYY-MM-DD HH:mm'
+    });
+    $('.date-picker').datetimepicker({
+        format: 'YYYY-MM-DD'
+    });
+    $('.time-picker').datetimepicker({
+        format: 'HH:mm'
+    });
 });

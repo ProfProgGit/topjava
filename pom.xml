@@ -47,6 +47,7 @@
         <webjars-datetimepicker.version>2.5.4</webjars-datetimepicker.version>
         <webjars-noty.version>3.1.0</webjars-noty.version>
         <webjars-datatables.version>1.10.15</webjars-datatables.version>
+        <webjars-bootstrap-datetimepicker.version>4.17.45</webjars-bootstrap-datetimepicker.version>
     </properties>
 
     <build>
@@ -112,28 +113,28 @@
                 </configuration>
             </plugin>
 
-<!--
-            <plugin>
-                <groupId>org.apache.tomcat.maven</groupId>
-                <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <contextFile>src/main/resources/tomcat/context.xml</contextFile>
-                    <systemProperties>
-                        <file.encoding>UTF-8</file.encoding>
-                        <spring.profiles.active>tomcat,datajpa</spring.profiles.active>
-                    </systemProperties>
-                    <protocol>org.apache.coyote.http11.Http11NioProtocol</protocol>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.postgresql</groupId>
-                        <artifactId>postgresql</artifactId>
-                        <version>${postgresql.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
--->
+            <!--
+                        <plugin>
+                            <groupId>org.apache.tomcat.maven</groupId>
+                            <artifactId>tomcat7-maven-plugin</artifactId>
+                            <version>2.2</version>
+                            <configuration>
+                                <contextFile>src/main/resources/tomcat/context.xml</contextFile>
+                                <systemProperties>
+                                    <file.encoding>UTF-8</file.encoding>
+                                    <spring.profiles.active>tomcat,datajpa</spring.profiles.active>
+                                </systemProperties>
+                                <protocol>org.apache.coyote.http11.Http11NioProtocol</protocol>
+                            </configuration>
+                            <dependencies>
+                                <dependency>
+                                    <groupId>org.postgresql</groupId>
+                                    <artifactId>postgresql</artifactId>
+                                    <version>${postgresql.version}</version>
+                                </dependency>
+                            </dependencies>
+                        </plugin>
+            -->
         </plugins>
     </build>
 
@@ -288,6 +289,17 @@
                 <exclusion>
                     <groupId>org.webjars.bower</groupId>
                     <artifactId>jquery</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars.bower</groupId>
+            <artifactId>github-com-Eonasdan-bootstrap-datetimepicker</artifactId>
+            <version>${webjars-bootstrap-datetimepicker.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jquery</artifactId>
+                    <groupId>org.webjars.bower</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
