@@ -7,12 +7,13 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealWithExceed;
+import ru.javawebinar.topjava.util.BindingResultFormatted;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.BindingResultUtil.*;
+import static ru.javawebinar.topjava.util.BindingResultFormatted.*;
 
 
 @RestController
@@ -37,27 +38,18 @@ public class MealAjaxController extends AbstractMealController {
         super.delete(id);
     }
 
-//    @RequestParam("id") Integer id,
-//    @RequestParam("dateTime") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTime,
-//    @RequestParam("description") String description,
-//    @RequestParam("calories") int calories
-
     @PostMapping
-    public ResponseEntity<String> createOrUpdate(@Validated(Meal.WebValidation.class) Meal meal, BindingResult result) {
-        ResponseEntity<String> responseOk = buildOkResponse(result);
-
-        if (responseOk == null) {
-            return buildErrorResponse(result);
+    public ResponseEntity<String> createOrUpdate(@Validated(Meal.WebValidation.class) Meal meal, BindingResult bindingResult) {
+        BindingResultFormatted result = new BindingResultFormatted(bindingResult);
+        if (result.isOk()) {
+            if (meal.isNew()) {
+                super.create(meal);
+            }
+            else {
+                super.update(meal, meal.getId());
+            }
         }
-
-        if (meal.isNew()) {
-            super.create(meal);
-        }
-        else {
-            super.update(meal, meal.getId());
-        }
-
-        return responseOk;
+        return result.getResultFormatted();
     }
 
     @Override

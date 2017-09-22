@@ -6,12 +6,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.BindingResultFormatted;
 import ru.javawebinar.topjava.util.UserUtil;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static ru.javawebinar.topjava.util.BindingResultUtil.*;
+import static ru.javawebinar.topjava.util.BindingResultFormatted.*;
 
 
 @RestController
@@ -37,19 +38,16 @@ public class AdminAjaxController extends AbstractUserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
-        ResponseEntity<String> responseOk = buildOkResponse(result);
-        if (responseOk == null) {
-            return buildErrorResponse(result);
+    public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult bindingResult) {
+        BindingResultFormatted  result = new BindingResultFormatted(bindingResult);
+        if (result.isOk()) {
+            if (userTo.isNew()) {
+                super.create(UserUtil.createNewFromTo(userTo));
+            } else {
+                super.update(userTo, userTo.getId());
+            }
         }
-
-        if (userTo.isNew()) {
-            super.create(UserUtil.createNewFromTo(userTo));
-        } else {
-            super.update(userTo, userTo.getId());
-        }
-
-        return responseOk;
+        return result.getResultFormatted();
     }
 
     @Override
