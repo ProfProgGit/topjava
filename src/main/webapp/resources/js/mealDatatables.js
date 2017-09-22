@@ -2,9 +2,11 @@ var ajaxUrl = "ajax/profile/meals/";
 var datatableApi;
 
 $.ajaxSetup({
-    dataFilter: function (data) {
-        return data.replace(/("dateTime":"\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}):\d{2}"/g, '$1 $2"');
-    }
+    converters: { "text json": function (stringData) {
+        return $(JSON.parse(stringData)).each(function () {
+            this.dateTime = this.dateTime.replace('T', ' ').substr(0,16);
+        });
+    } }
 });
 
 function updateTable() {
