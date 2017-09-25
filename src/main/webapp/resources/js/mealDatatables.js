@@ -3,9 +3,11 @@ var datatableApi;
 
 $.ajaxSetup({
     converters: { "text json": function (stringData) {
-        return $(JSON.parse(stringData)).each(function () {
+        var json = JSON.parse(stringData);
+        $(json).each(function () {
             this.dateTime = this.dateTime.replace('T', ' ').substr(0,16);
         });
+        return json;
     } }
 });
 
