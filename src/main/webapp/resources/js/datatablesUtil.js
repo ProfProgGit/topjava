@@ -11,7 +11,7 @@ function makeEditable() {
 
     var token = $("meta[name='_csrf']").attr("content");
     var header = $("meta[name='_csrf_header']").attr("content");
-    $(document).ajaxSend(function(e, xhr, options) {
+    $(document).ajaxSend(function (e, xhr, options) {
         xhr.setRequestHeader(header, token);
     });
 }
@@ -60,13 +60,13 @@ function save() {
     });
 }
 
-var failedNote;
+var failedNote = [];
 
 function closeNoty() {
-    if (failedNote) {
-        failedNote.close();
-        failedNote = undefined;
-    }
+    $(failedNote).each(function () {
+        this.close();
+    });
+    failedNote = [];
 }
 
 function successNoty(key) {
@@ -81,12 +81,16 @@ function successNoty(key) {
 
 function failNoty(event, jqXHR, options, jsExc) {
     closeNoty();
-    var errorInfo = $.parseJSON(jqXHR.responseText);
-    failedNote = new Noty({
-        text: "<span class='glyphicon glyphicon-exclamation-sign'></span> &nbsp;" + i18n["common.errorStatus"] + ": " + jqXHR.status + "<br>" + errorInfo.cause + "<br>" + errorInfo.detail,
-        type: "error",
-        layout: "bottomRight"
-    }).show();
+    $(JSON.parse(jqXHR.responseText)).each(function () {
+        failedNote.push(
+            new Noty({
+                text: "<span class='glyphicon glyphicon-exclamation-sign'></span> &nbsp;" + i18n["common.errorStatus"] + ": " + jqXHR.status + "<br>" + this.cause + "<br>" + this.detail,
+                type: "error",
+                layout: "bottomRight"
+            }).show()
+        );
+    });
+
 }
 
 function renderEditBtn(data, type, row) {

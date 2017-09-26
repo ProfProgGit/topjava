@@ -5,9 +5,17 @@ public class ErrorInfo {
     private final String cause;
     private final String detail;
 
-    public ErrorInfo(CharSequence url, Throwable ex) {
+    public ErrorInfo(CharSequence url, String cause, String detail) {
         this.url = url.toString();
-        this.cause = ex.getClass().getSimpleName();
-        this.detail = ex.getLocalizedMessage();
+        this.cause = cause;
+        this.detail = detail;
+    }
+
+    public ErrorInfo(CharSequence url, Throwable ex, String detail) {
+        this(url, ex.getClass().getSimpleName(), detail);
+    }
+
+    public ErrorInfo(CharSequence url, Throwable ex) {
+        this(url, ex, ex.getLocalizedMessage());
     }
 }

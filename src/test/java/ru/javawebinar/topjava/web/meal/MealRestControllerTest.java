@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.util.MealsUtil;
@@ -19,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.MealTestData.MATCHER;
+import static ru.javawebinar.topjava.MealTestErrors.*;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
@@ -128,5 +131,36 @@ public class MealRestControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(content().json(JsonUtil.writeValue(
                         MealsUtil.getWithExceeded(Arrays.asList(MEAL6, MEAL5, MEAL4, MEAL3, MEAL2, MEAL1), USER.getCaloriesPerDay()))));
+    }
+
+    @Test
+    public void testValidationErrors() throws Exception {
+        Meal updated = new Meal(MEAL1_ID, null, "", 3);
+        mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(USER))
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().json(JsonUtil.writeArray(
+                        DATETIME_NULL_ERROR,
+                        CALORIES_OUT_OF_RANGE_ERROR,
+                        DESCRIPTION_BALNK_ERROR)));
+
+        MATCHER.assertEquals(MEAL1, service.get(MEAL1_ID, USER_ID));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void testDuplicateDateTimeErrors() throws Exception {
+        Meal updated = new Meal(MEAL1_ID, MEAL2.getDateTime(), MEAL1.getDescription(), MEAL1.getCalories());
+        mockMvc.perform(put(REST_URL + MEAL1_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(USER))
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(content().json(JsonUtil.writeValue(DATETIME_DUPLICATION_ERROR)));
+        MATCHER.assertEquals(MEAL1, service.get(MEAL1_ID, USER_ID));
     }
 }

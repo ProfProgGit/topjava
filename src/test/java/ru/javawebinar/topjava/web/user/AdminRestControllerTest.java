@@ -3,6 +3,8 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -18,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
+import static ru.javawebinar.topjava.UserTestErrors.*;
 
 public class AdminRestControllerTest extends AbstractControllerTest {
 
@@ -84,14 +87,13 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     public void testUpdate() throws Exception {
         User updated = new User(USER);
-        updated.setName("UpdatedName");
+        updated.setName("UpdatedUser");
         updated.setRoles(Collections.singletonList(Role.ROLE_ADMIN));
         mockMvc.perform(put(REST_URL + USER_ID)
-                .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
-                .content(JsonUtil.writeValue(updated)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSON_UPDATED_USER_WITH_PASSWORD))
                 .andExpect(status().isOk());
-
         MATCHER.assertEquals(updated, userService.get(USER_ID));
     }
 
@@ -117,4 +119,42 @@ public class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentListMatcher(ADMIN, USER)));
     }
+
+    @Test
+    public void testValidationErrors() throws Exception {
+        User updated = new User(USER);
+        updated.setName("");
+        updated.setEmail("badEmailFormat");
+        updated.setCaloriesPerDay(1);
+        mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(content().json(JsonUtil.writeArray(
+                        EMAIL_BAD_FORMAT_ERROR,
+                        PASSWORD_BLANK_ERROR,
+                        NAME_BLANK_ERROR,
+                        CALORIES_OUT_OF_RANGE_ERROR)));
+
+        User original = new User(USER);
+        MATCHER.assertEquals(original, userService.get(USER_ID));
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void testDuplicateEmailErrors() throws Exception {
+        mockMvc.perform(put(REST_URL + USER_ID)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(ADMIN))
+                .content(DUPLICATE_EMAIL_USER_WITH_PASSWORD))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andExpect(content().json(JsonUtil.writeValue(DUPLICATE_EMAIL_ERROR)));
+
+        User original = new User(USER);
+        MATCHER.assertEquals(original, userService.get(USER_ID));
+    }
+
 }
