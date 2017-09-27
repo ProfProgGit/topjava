@@ -18,18 +18,23 @@ function makeEditable() {
 
 function add() {
     $("#modalTitle").html(i18n["addTitle"]);
-    form.find(":input").val("");
+    cleanModalForm();
     $("#editRow").modal();
 }
 
 function updateRow(id) {
     $("#modalTitle").html(i18n["editTitle"]);
+    cleanModalForm();
     $.get(ajaxUrl + id, function (data) {
         $.each(data, function (key, value) {
             form.find("input[name='" + key + "']").val(value);
         });
         $("#editRow").modal();
     });
+}
+
+function cleanModalForm(){
+    form.find(":input").val("");
 }
 
 function deleteRow(id) {

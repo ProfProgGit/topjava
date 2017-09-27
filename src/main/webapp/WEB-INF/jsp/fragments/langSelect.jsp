@@ -4,7 +4,7 @@
 
 <c:set var="requestPath" value="${requestScope['javax.servlet.forward.request_uri']}"/>
 <li class="dropdown">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown">${pageContext.response.locale}<b class="caret"></b></a>
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><c:out value='${"ru" == pageContext.response.locale ? "ru" : "en" }'/><b class="caret"></b></a>
     <ul class="dropdown-menu">
         <li><a href="${requestPath}?language=en">English</a></li>
         <li><a href="${requestPath}?language=ru">Русский</a></li>

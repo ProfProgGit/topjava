@@ -3,8 +3,6 @@ package ru.javawebinar.topjava.web.user;
 import org.junit.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.TestUtil;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
@@ -21,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
 import static ru.javawebinar.topjava.UserTestErrors.*;
+
 
 public class AdminRestControllerTest extends AbstractControllerTest {
 
@@ -143,7 +142,6 @@ public class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    @Transactional(propagation = Propagation.NEVER)
     public void testDuplicateEmailErrors() throws Exception {
         mockMvc.perform(put(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
